@@ -31,21 +31,22 @@ async function openFile(name) {
 }
 
 async function bodyParserContent(fileName) {
-  const file = await openFile(fileName)
+  let file = await openFile(fileName)
+  var myRegex = new RegExp("^#[\\w' '.]*", "g")
+  const title = file.match(myRegex).toString().replace("# ", "")
+  file = file.replace("[[", "").replace("]]", "")
   const body = {
-    "title": "Liverpool FC",
+    "title": title,
     "contentFormat": "markdown",
     "content": file,
-    "tags": ["football", "sport", "Liverpool"],
     "publishStatus": "draft"
   }
-
   console.log(body)
 
   return JSON.stringify(body)
 }
 
-app.get('/', async (req, res) => {
+app.get('/', async (_, res) => {
   const app = await getAuth()
   res.status(200).json({ data: app })
 })
