@@ -11,4 +11,9 @@ Desenvolvido com express
       yarn install
       yarn run dev
 
+Copie o .env_exemple e realize as alterações
 
+Com o httpie faça os testes
+
+      http localhost:3000 
+      http POST localhost:3000 fileName=<your/file.md>
