@@ -23,7 +23,7 @@ async function getAuth() {
 
 async function openFile(name) {
   try {
-    const data = await fs.readFile(`${process.env.OBSIDIAN_FOLDER}/${name}.md`, { encoding: 'utf8' })
+    const data = await fs.readFile(`${process.env.OBSIDIAN_FOLDER}/${name}`, { encoding: 'utf8' })
     return data
   } catch (err) {
     throw err
