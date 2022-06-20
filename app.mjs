@@ -1,70 +1,18 @@
 import express from 'express'
-import fetch from "node-fetch"
-import fs from 'fs/promises'
-import bodyParser from 'body-parser'
-import 'dotenv/config'
+import { MediumAPI } from './lib/medium.mjs'
 const app = express()
 const port = 3000
-app.use(bodyParser.json({ type: 'application/*+json' }))
-var jsonParser = bodyParser.json()
+app.use(express.json())
+const medium = new MediumAPI()
 
-async function getAuth() {
-  const api_fetch = await fetch(`${process.env.API}/me`, {
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.TOKEN}`
-    }
-  })
-  const response = await api_fetch.json();
-
-  return response.data
-}
-
-async function openFile(name) {
-  try {
-    const data = await fs.readFile(`${process.env.OBSIDIAN_FOLDER}/${name}.md`, { encoding: 'utf8' })
-    return data
-  } catch (err) {
-    throw err
-  }
-}
-
-async function bodyParserContent(fileName) {
-  const file = await openFile(fileName)
-  const body = {
-    "title": "Liverpool FC",
-    "contentFormat": "markdown",
-    "content": file,
-    "tags": ["football", "sport", "Liverpool"],
-    "publishStatus": "draft"
-  }
-
-  console.log(body)
-
-  return JSON.stringify(body)
-}
-
-app.get('/', async (req, res) => {
-  const app = await getAuth()
-  res.status(200).json({ data: app })
+app.get('/', async (_, res) => {
+  const response = await medium.getAuth()
+  res.status(response.status).json(response.api)
 })
 
-app.post('/post', jsonParser, async (req, res) => {
-  const app = await getAuth()
-  console.log(req.body)
-  const body = await bodyParserContent(req.body.fileName)
-  const api_fetch = await fetch(`${process.env.API}/users/${app.id}/posts`, {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.TOKEN}`,
-      'Accept-Charset': 'utf-8'
-    },
-    body: body
-  })
-  const data = await api_fetch.json()
-  res.status(200).json({ api: data })
+app.post('/post', async (req, res) => {
+  const response = await medium.draftPost(req.body)
+  res.status(response.status).json(response.api)
 })
 
 app.listen(port, () => {
