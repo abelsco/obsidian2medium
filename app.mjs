@@ -7,12 +7,12 @@ const medium = new MediumAPI()
 
 app.get('/', async (_, res) => {
   const response = await medium.getAuth()
-  res.status(200).json(response)
+  res.status(response.status).json(response.api)
 })
 
 app.post('/post', async (req, res) => {
   const response = await medium.draftPost(req.body)
-  res.status(200).json(response)
+  res.status(response.status).json(response.api)
 })
 
 app.listen(port, () => {
