@@ -16,6 +16,7 @@ describe('getAuth()', () => {
     const medium = new MediumAPI()
     const actual = await medium.getAuth()
 
+    expect(actual.status).toBe(200)
     expect(actual.api.data.username).toBe(process.env.USERNAME)
   })
 
