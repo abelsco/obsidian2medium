@@ -13,7 +13,7 @@ export class HTTPResponseError extends Error {
   }
 }
 
-export function checkStatus(response) {
+export function checkStatusFetch(response) {
   if (response.ok) {
     // response.status >= 200 && response.status < 300
     return response;
